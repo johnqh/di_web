@@ -33,3 +33,20 @@ export {
   initializeNetworkService,
   resetNetworkService,
 } from './network-singleton';
+
+// Export storage implementations
+export {
+  WebStorage,
+  AdvancedWebStorage,
+  webStorage,
+  advancedWebStorage,
+} from './storage/storage.web';
+export {
+  WebStorageService,
+  WebSerializedStorageService,
+} from './storage/web-storage.service';
+export {
+  getStorageService,
+  initializeStorageService,
+  resetStorageService,
+} from './storage/storage-singleton';
