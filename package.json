@@ -1,6 +1,6 @@
 {
   "name": "@sudobility/di_web",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Web implementations of dependency injection services for 0xmail.box",
   "type": "module",
   "main": "dist/index.js",
