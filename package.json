@@ -1,7 +1,7 @@
 {
   "name": "@sudobility/di_web",
   "version": "0.1.1",
-  "description": "Web implementations of dependency injection services for 0xmail.box",
+  "description": "Web implementations of dependency injection services for Sudobility",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -33,10 +33,9 @@
     "dependency-injection",
     "di",
     "web",
-    "0xmail",
     "web3"
   ],
-  "author": "0xmail.box",
+  "author": "Sudobility Inc",
   "license": "MIT",
   "peerDependencies": {
     "@sudobility/di": "^1.4.14",

@@ -1,6 +1,6 @@
 /**
  * @sudobility/di_web
- * Web implementations of dependency injection services for 0xmail.box
+ * Web implementations of dependency injection services for Sudobility
  *
  * This package provides pure web implementations that depend only on:
  * - @sudobility/di (DI interfaces)
