@@ -1,6 +1,6 @@
 {
   "name": "@sudobility/di_web",
-  "version": "0.1.11",
+  "version": "0.1.12",
   "description": "Web implementations of dependency injection services for Sudobility",
   "type": "module",
   "main": "dist/index.js",
@@ -38,8 +38,8 @@
   "author": "Sudobility Inc",
   "license": "MIT",
   "peerDependencies": {
-    "@sudobility/di": "^1.4.14",
-    "@sudobility/types": "^1.9.5",
+    "@sudobility/di": "^1.4.30",
+    "@sudobility/types": "^1.9.31",
     "axios": "^1.13.0",
     "firebase": "^12.4.0"
   },
