@@ -32,7 +32,10 @@
  * ```
  */
 
-import type { InfoInterface } from '@sudobility/di';
+import {
+  type InfoInterface,
+  initializeInfoService as initializeDiInfoService,
+} from '@sudobility/di';
 import { InfoType, Optional } from '@sudobility/types';
 
 /**
@@ -162,6 +165,7 @@ let infoServiceInstance: WebInfoService | null = null;
 
 /**
  * Initialize the info service singleton
+ * Also registers with @sudobility/di so getInfoService() works from both packages
  * @param service - WebInfoService instance (optional, creates one if not provided)
  */
 export function initializeInfoService(service?: WebInfoService): void {
@@ -169,6 +173,8 @@ export function initializeInfoService(service?: WebInfoService): void {
     return;
   }
   infoServiceInstance = service ?? new WebInfoService();
+  // Also register with @sudobility/di so getInfoService() from that package works
+  initializeDiInfoService(infoServiceInstance);
 }
 
 /**

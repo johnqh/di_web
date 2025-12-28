@@ -1,4 +1,10 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+
+// Mock @sudobility/di to avoid broken import chain in tests
+vi.mock('@sudobility/di', () => ({
+  initializeInfoService: vi.fn(),
+}));
+
 import {
   WebInfoService,
   createWebInfoService,
