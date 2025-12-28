@@ -8,7 +8,9 @@
       "Bash(npm test:*)",
       "Bash(git push:*)",
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(npm view:*)",
+      "Bash(npm run lint:fix:*)"
     ],
     "deny": [],
     "ask": []
