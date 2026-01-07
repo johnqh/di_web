@@ -46,7 +46,7 @@ import { getStorageService, webNetworkClient } from '@sudobility/di_web';
 ## Known Issues
 
 The package currently has some TypeScript compilation errors that need to be resolved:
-1. Some types are imported from `@sudobility/lib` that should come from `@sudobility/di`
+1. Some types are imported from `@sudobility/mail_box_lib` that should come from `@sudobility/di`
 2. `import.meta.env` type errors in config files (need proper type definitions)
 3. Some null vs undefined type mismatches
 
@@ -55,7 +55,7 @@ These will be fixed in subsequent updates. The package is functional despite the
 ## Dependencies
 
 - `@sudobility/di` ^1.4.14 (peer)
-- `@sudobility/lib` ^3.13.6 (peer)
+- `@sudobility/mail_box_lib` ^3.13.6 (peer)
 - `@sudobility/types` ^1.9.5 (peer)
 - `axios` ^1.13.0 (peer)
 - `firebase` ^12.4.0 (peer)
