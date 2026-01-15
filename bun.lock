@@ -7,7 +7,7 @@
         "@eslint/js": "^9.38.0",
         "@sudobility/components": "^4.0.156",
         "@sudobility/di": "^1.5.18",
-        "@sudobility/types": "^1.9.44",
+        "@sudobility/types": "^1.9.45",
         "@types/node": "^24.10.1",
         "@types/react": "^19.1.8",
         "@typescript-eslint/eslint-plugin": "^8.46.2",
@@ -25,7 +25,7 @@
       "peerDependencies": {
         "@sudobility/components": "^4.0.156",
         "@sudobility/di": "^1.5.18",
-        "@sudobility/types": "^1.9.44",
+        "@sudobility/types": "^1.9.45",
         "react": "^18.0.0 || ^19.0.0",
       },
     },
@@ -293,7 +293,7 @@
 
     "@sudobility/di": ["@sudobility/di@1.5.18", "", { "peerDependencies": { "@notifee/react-native": ">=7.0.0", "@react-native-async-storage/async-storage": ">=1.19.0", "@react-native-community/netinfo": ">=9.0.0", "@react-native-firebase/analytics": ">=18.0.0", "@react-native-firebase/app": ">=18.0.0", "@react-native-firebase/messaging": ">=18.0.0", "@react-native-firebase/remote-config": ">=18.0.0", "@sudobility/types": "^1.9.44", "firebase": ">=10.0.0", "react": ">=18.0.0", "react-native": ">=0.70.0" }, "optionalPeers": ["@notifee/react-native", "@react-native-async-storage/async-storage", "@react-native-community/netinfo", "@react-native-firebase/analytics", "@react-native-firebase/app", "@react-native-firebase/messaging", "@react-native-firebase/remote-config", "firebase", "react-native"] }, "sha512-NrbfR/xTPr1cMGWxhGDwWFP0MKykD2bOE/xqsNEFwf7ONZHNoc8NUNjPaGvgOSiW7xY0KYz2YwiTIhTB34dhpw=="],
 
-    "@sudobility/types": ["@sudobility/types@1.9.44", "", {}, "sha512-2oRTD6sQ6Ouwyb4DAerU6FNCkGRaXnzPNwTg7puIzA3ZVTTauN6DzMLw0QzzUiwLHWlVpYZfldZK+IRYOz0LDA=="],
+    "@sudobility/types": ["@sudobility/types@1.9.45", "", {}, "sha512-bANwJwRnsrRycBbFvBdN3WatK9SbjN99IC0ms80Qq/+MWToT9ZJ8k7pyRjd8/TUsfpRkM6cZzSfG02YEvTUzUw=="],
 
     "@types/chai": ["@types/chai@5.2.3", "", { "dependencies": { "@types/deep-eql": "*", "assertion-error": "^2.0.1" } }, "sha512-Mw558oeA9fFbv65/y4mHtXDs9bPnFMZAL/jxdPFUpOHHIXX91mcgEHbS5Lahr+pwZFR8A7GQleRWeI6cGFC2UA=="],
 
