@@ -1,6 +1,6 @@
 {
   "name": "@sudobility/di_web",
-  "version": "0.1.71",
+  "version": "0.1.72",
   "description": "Web implementations of dependency injection services for Sudobility",
   "type": "module",
   "main": "dist/index.js",
@@ -39,7 +39,7 @@
   "license": "MIT",
   "peerDependencies": {
     "@sudobility/components": "^4.0.162",
-    "@sudobility/di": "^1.5.22",
+    "@sudobility/di": "^1.5.23",
     "@sudobility/types": "^1.9.48",
     "react": "^18.0.0 || ^19.0.0"
   },
@@ -47,10 +47,20 @@
     "type": "git",
     "url": "https://github.com/johnqh/di_web.git"
   },
+  "peerDependenciesMeta": {
+    "@sudobility/auth_lib": {
+      "optional": true
+    },
+    "@sudobility/subscription_lib": {
+      "optional": true
+    }
+  },
   "devDependencies": {
     "@eslint/js": "^9.38.0",
+    "@sudobility/auth_lib": "^0.0.16",
     "@sudobility/components": "^4.0.162",
     "@sudobility/di": "^1.5.22",
+    "@sudobility/subscription_lib": "^0.0.8",
     "@sudobility/types": "^1.9.48",
     "@types/node": "^24.10.1",
     "@types/react": "^19.1.8",

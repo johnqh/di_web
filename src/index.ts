@@ -23,3 +23,17 @@ export {
   type BannerState,
   type BannerStateListener,
 } from './info/index.js';
+
+// Export Initialize module
+export {
+  // Analytics service
+  FirebaseAnalyticsService,
+  initializeFirebaseAnalytics,
+  getAnalyticsService,
+  resetAnalyticsService,
+  type AnalyticsEventParams,
+  // Web app initialization
+  initializeWebApp,
+  type WebAppInitOptions,
+  type RevenueCatConfig,
+} from './initialize/index.js';
