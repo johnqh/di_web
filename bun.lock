@@ -8,7 +8,7 @@
         "@sudobility/auth_lib": "^0.0.18",
         "@sudobility/components": "^5.0.1",
         "@sudobility/di": "^1.5.23",
-        "@sudobility/subscription_lib": "^0.0.8",
+        "@sudobility/subscription_lib": "^0.0.10",
         "@sudobility/types": "^1.9.48",
         "@types/node": "^24.10.1",
         "@types/react": "^19.1.8",
@@ -409,7 +409,7 @@
 
     "@sudobility/di": ["@sudobility/di@1.5.23", "", { "peerDependencies": { "@notifee/react-native": ">=7.0.0", "@react-native-async-storage/async-storage": ">=1.19.0", "@react-native-community/netinfo": ">=9.0.0", "@react-native-firebase/analytics": ">=18.0.0", "@react-native-firebase/app": ">=18.0.0", "@react-native-firebase/messaging": ">=18.0.0", "@react-native-firebase/remote-config": ">=18.0.0", "@sudobility/types": "^1.9.48", "firebase": ">=10.0.0", "react": ">=18.0.0", "react-native": ">=0.70.0" }, "optionalPeers": ["@notifee/react-native", "@react-native-async-storage/async-storage", "@react-native-community/netinfo", "@react-native-firebase/analytics", "@react-native-firebase/app", "@react-native-firebase/messaging", "@react-native-firebase/remote-config", "firebase", "react-native"] }, "sha512-tbcyoPo2aGwyxpA0P6rb5tbe577sBmPKlTiUscfaXkfkL3r7jYNKqA9QIJ0hYiJfZQEvFsXLiBgsDUF/mTpiIw=="],
 
-    "@sudobility/subscription_lib": ["@sudobility/subscription_lib@0.0.8", "", { "peerDependencies": { "@revenuecat/purchases-js": "^1.0.0", "react": "^19.0.0" }, "optionalPeers": ["@revenuecat/purchases-js"] }, "sha512-U8dbra1XBspZ/6lMrzBci4iV9NOAee3BTLvr9qzqcIoYKqE4Glt74y00SkjXwSsK9nmq9Udy2DE3ab9D7/vN+g=="],
+    "@sudobility/subscription_lib": ["@sudobility/subscription_lib@0.0.10", "", { "peerDependencies": { "@revenuecat/purchases-js": "^1.0.0", "react": "^18.0.0 || ^19.0.0", "react-native-purchases": ">=7.0.0" }, "optionalPeers": ["@revenuecat/purchases-js", "react-native-purchases"] }, "sha512-Y4wtIFvzzr/R93ymjC7GS65vatsPLMj8AHWg5EW3gP7c7tm2WyD/VwfFIj23+mQ9SVAqxS7T5/uPnoQsV3M4GQ=="],
 
     "@sudobility/types": ["@sudobility/types@1.9.48", "", {}, "sha512-sCXkeICtA//ftTDHdlLEcojVpOJi/ocvOmUYGh0S0eTl/tG5HWbOP4cz5aJz8jue4c2vYe/cJxj6BwtRlAOLEA=="],
 
