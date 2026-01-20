@@ -221,7 +221,7 @@ export async function initializeWebApp(
     // Dynamically import auth_lib to avoid hard dependency
     try {
       const authLib = await import('@sudobility/auth_lib');
-      authLib.initializeFirebaseAuth({ config: firebaseConfig });
+      authLib.initializeFirebaseAuth();
       initializeNetworkService(new authLib.FirebaseAuthNetworkService());
     } catch (error) {
       console.error(
