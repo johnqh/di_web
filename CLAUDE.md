@@ -55,10 +55,13 @@ bun run format         # Format code with Prettier
 ```
 src/
 ├── index.ts              # Main entry point, exports all services
-└── info/                 # Info service and components
-    ├── index.ts          # Info module exports
-    ├── info.web.ts       # WebInfoService class, singleton management, BannerState type
-    └── InfoBanner.tsx    # InfoBanner component and useInfoBanner hook
+├── info/                 # Info service and components
+│   ├── index.ts          # Info module exports
+│   ├── info.web.ts       # WebInfoService class, singleton management, BannerState type
+│   └── InfoBanner.tsx    # InfoBanner component and useInfoBanner hook
+└── initialize/           # Web app initialization
+    ├── index.ts          # Initialize module exports
+    └── initialize.ts     # initializeWebApp function
 tests/
 └── index.test.ts         # Vitest test file (15 tests)
 dist/                     # Compiled output (auto-generated)
