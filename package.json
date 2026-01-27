@@ -78,5 +78,8 @@
   },
   "publishConfig": {
     "access": "restricted"
+  },
+  "dependencies": {
+    "firebase": "^12.8.0"
   }
 }
