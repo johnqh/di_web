@@ -216,25 +216,24 @@ export async function initializeWebApp(
   // 3. Initialize Firebase Analytics singleton
   const analytics = initializeFirebaseAnalytics();
 
-  // 4 & 5. Initialize Auth and Network service
+  // 4. Initialize Firebase Auth (if enabled)
   if (enableFirebaseAuth) {
     // Dynamically import auth_lib to avoid hard dependency
     try {
       const authLib = await import('@sudobility/auth_lib');
       authLib.initializeFirebaseAuth();
-      initializeNetworkService(new authLib.FirebaseAuthNetworkService());
     } catch (error) {
       console.error(
         'Failed to initialize Firebase Auth. Make sure @sudobility/auth_lib is installed.',
         error
       );
-      // Fall back to basic network service
-      initializeNetworkService();
     }
-  } else {
-    // Initialize network service without auth retry logic
-    initializeNetworkService();
   }
+
+  // 5. Initialize network service (for online/offline status detection)
+  // Note: For authenticated API calls, apps should use FirebaseAuthNetworkService directly
+  // from @sudobility/auth_lib, which provides automatic token refresh on 401 responses.
+  initializeNetworkService();
 
   // 6. Initialize info service
   initializeInfoService();
