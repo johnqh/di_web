@@ -1,6 +1,6 @@
 {
   "name": "@sudobility/di_web",
-  "version": "0.1.81",
+  "version": "0.1.82",
   "description": "Web implementations of dependency injection services for Sudobility",
   "type": "module",
   "main": "dist/index.js",
@@ -39,7 +39,7 @@
   "license": "MIT",
   "peerDependencies": {
     "@sudobility/components": "^5.0.1",
-    "@sudobility/di": "^1.5.26",
+    "@sudobility/di": "^1.5.27",
     "@sudobility/types": "^1.9.48",
     "react": "^18.0.0 || ^19.0.0"
   },
@@ -59,7 +59,7 @@
     "@eslint/js": "^9.38.0",
     "@sudobility/auth_lib": "^0.0.24",
     "@sudobility/components": "^5.0.1",
-    "@sudobility/di": "^1.5.26",
+    "@sudobility/di": "^1.5.27",
     "@sudobility/subscription_lib": "^0.0.12",
     "@sudobility/types": "^1.9.48",
     "@types/node": "^24.10.1",

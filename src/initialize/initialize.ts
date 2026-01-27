@@ -4,13 +4,13 @@
  * that sets up all DI services in the correct order.
  */
 
+import { initializeStorageService } from '@sudobility/di/web';
+import { initializeNetworkService } from '@sudobility/di/web';
 import {
-  initializeStorageService,
-  initializeNetworkService,
   initializeFirebaseService,
   getFirebaseService,
-  type FirebaseConfig,
-} from '@sudobility/di';
+} from '../firebase/firebase.web.js';
+import type { FirebaseConfig } from '../firebase/firebase.interface.js';
 import { initializeInfoService } from '../info/index.js';
 
 // ============================================================================

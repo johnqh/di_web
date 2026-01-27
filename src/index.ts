@@ -37,3 +37,29 @@ export {
   type WebAppInitOptions,
   type RevenueCatConfig,
 } from './initialize/index.js';
+
+// Export Firebase service (moved from @sudobility/di)
+export {
+  getFirebaseService,
+  initializeFirebaseService,
+  resetFirebaseService,
+  WebFirebaseService,
+  createWebFirebaseService,
+} from './firebase/firebase.web.js';
+
+// Export Firebase interfaces and types
+export type {
+  AnalyticsEvent as FirebaseAnalyticsEvent,
+  AnalyticsService,
+  RemoteConfigValue,
+  RemoteConfigService,
+  FCMNotificationPayload,
+  FCMDataPayload,
+  FCMMessage,
+  FCMPermissionState,
+  FCMState,
+  FCMService,
+  FirebaseService,
+  FirebaseConfig,
+  FirebaseInitOptions,
+} from './firebase/firebase.interface.js';
