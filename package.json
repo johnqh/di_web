@@ -1,6 +1,6 @@
 {
   "name": "@sudobility/di_web",
-  "version": "0.1.89",
+  "version": "0.1.90",
   "description": "Web implementations of dependency injection services for Sudobility",
   "type": "module",
   "main": "dist/index.js",
@@ -49,9 +49,6 @@
     "url": "https://github.com/johnqh/di_web.git"
   },
   "peerDependenciesMeta": {
-    "@sudobility/auth_lib": {
-      "optional": true
-    },
     "@sudobility/subscription_lib": {
       "optional": true
     }
@@ -59,7 +56,6 @@
   "devDependencies": {
     "firebase": "^12.8.0",
     "@eslint/js": "^9.38.0",
-    "@sudobility/auth_lib": "^0.0.30",
     "@sudobility/components": "^5.0.1",
     "@sudobility/di": "^1.5.30",
     "@sudobility/subscription_lib": "^0.0.12",

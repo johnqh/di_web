@@ -162,9 +162,6 @@ export interface WebAppInitOptions {
   /** Firebase configuration */
   firebaseConfig: FirebaseConfig;
 
-  /** Enable Firebase Auth and auth-aware network service */
-  enableFirebaseAuth?: boolean;
-
   /** RevenueCat configuration - if provided, enables RevenueCat */
   revenueCatConfig?: RevenueCatConfig;
 
@@ -185,12 +182,15 @@ export interface WebAppInitOptions {
  * 1. Storage service
  * 2. Firebase DI service (analytics, remote config, etc.)
  * 3. Firebase Analytics singleton
- * 4. Firebase Auth (if enableFirebaseAuth is true)
- * 5. Network service (with or without auth retry logic)
- * 6. Info service
- * 7. Subscription/RevenueCat (if enableRevenueCat is true)
- * 8. i18n (if provided)
- * 9. Performance monitoring (if provided)
+ * 4. Network service
+ * 5. Info service
+ * 6. Subscription/RevenueCat (if config provided)
+ * 7. i18n (if provided)
+ * 8. Performance monitoring (if provided)
+ *
+ * Note: Firebase Auth is NOT initialized here. Apps using Firebase Auth should
+ * call initializeFirebaseAuth() from @sudobility/auth_lib separately, or use
+ * SudobilityAppWithFirebaseAuth from @sudobility/building_blocks which handles this.
  *
  * @param options - Configuration options
  * @returns The initialized analytics service
@@ -200,7 +200,6 @@ export async function initializeWebApp(
 ): Promise<FirebaseAnalyticsService> {
   const {
     firebaseConfig,
-    enableFirebaseAuth = false,
     revenueCatConfig,
     initializeI18n,
     registerServiceWorker,
@@ -216,29 +215,15 @@ export async function initializeWebApp(
   // 3. Initialize Firebase Analytics singleton
   const analytics = initializeFirebaseAnalytics();
 
-  // 4. Initialize Firebase Auth (if enabled)
-  if (enableFirebaseAuth) {
-    // Dynamically import auth_lib to avoid hard dependency
-    try {
-      const authLib = await import('@sudobility/auth_lib');
-      authLib.initializeFirebaseAuth();
-    } catch (error) {
-      console.error(
-        'Failed to initialize Firebase Auth. Make sure @sudobility/auth_lib is installed.',
-        error
-      );
-    }
-  }
-
-  // 5. Initialize network service (for online/offline status detection)
+  // 4. Initialize network service (for online/offline status detection)
   // Note: For authenticated API calls, apps should use FirebaseAuthNetworkService directly
   // from @sudobility/auth_lib, which provides automatic token refresh on 401 responses.
   initializeNetworkService();
 
-  // 6. Initialize info service
+  // 5. Initialize info service
   initializeInfoService();
 
-  // 7. Initialize RevenueCat subscription (if config provided)
+  // 6. Initialize RevenueCat subscription (if config provided)
   if (revenueCatConfig) {
     try {
       const subscriptionLib = await import('@sudobility/subscription_lib');
@@ -263,12 +248,12 @@ export async function initializeWebApp(
     }
   }
 
-  // 8. Initialize i18n (app-specific)
+  // 7. Initialize i18n (app-specific)
   if (initializeI18n) {
     initializeI18n();
   }
 
-  // 9. Initialize performance monitoring (app-specific)
+  // 8. Initialize performance monitoring (app-specific)
   if (registerServiceWorker) {
     registerServiceWorker();
   }
