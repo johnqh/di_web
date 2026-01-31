@@ -3,7 +3,7 @@
  * Web implementations of dependency injection services for Sudobility
  *
  * This package provides web implementations that depend on:
- * - @sudobility/di (DI interfaces)
+ * - @sudobility/di (DI interfaces and Firebase implementations)
  * - @sudobility/types (type definitions)
  * - @sudobility/components (UI components)
  * - react (React framework)
@@ -26,7 +26,7 @@ export {
 
 // Export Initialize module
 export {
-  // Analytics service
+  // Analytics service (re-exported from @sudobility/di/web)
   FirebaseAnalyticsService,
   initializeFirebaseAnalytics,
   getAnalyticsService,
@@ -38,16 +38,17 @@ export {
   type RevenueCatConfig,
 } from './initialize/index.js';
 
-// Export Firebase service (moved from @sudobility/di)
+// Re-export Firebase from @sudobility/di/web for convenience
+// This allows existing code importing from di_web to continue working
 export {
   getFirebaseService,
   initializeFirebaseService,
   resetFirebaseService,
   WebFirebaseService,
   createWebFirebaseService,
-} from './firebase/firebase.web.js';
+} from '@sudobility/di/web';
 
-// Export Firebase interfaces and types
+// Re-export Firebase interfaces and types from @sudobility/di/web
 export type {
   AnalyticsEvent as FirebaseAnalyticsEvent,
   AnalyticsService,
@@ -62,4 +63,4 @@ export type {
   FirebaseService,
   FirebaseConfig,
   FirebaseInitOptions,
-} from './firebase/firebase.interface.js';
+} from '@sudobility/di/web';
