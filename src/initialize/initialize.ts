@@ -60,8 +60,8 @@ export interface WebAppInitOptions {
   /** Optional: Initialize i18n (app-specific, pass your initializeI18n function) */
   initializeI18n?: () => void;
 
-  /** Optional: Register service worker (app-specific, pass your function) */
-  registerServiceWorker?: () => void;
+  /** Optional: Register service worker. Pass `true` to use the shared implementation, or a function for custom behavior. */
+  registerServiceWorker?: boolean | (() => void);
 
   /** Optional: Initialize web vitals (app-specific, pass your function) */
   initWebVitals?: () => void;
@@ -146,7 +146,10 @@ export async function initializeWebApp(
   }
 
   // 8. Initialize performance monitoring (app-specific)
-  if (registerServiceWorker) {
+  if (registerServiceWorker === true) {
+    const { registerServiceWorker: register } = await import('../sw/register.js');
+    register();
+  } else if (typeof registerServiceWorker === 'function') {
     registerServiceWorker();
   }
   if (initWebVitals) {
