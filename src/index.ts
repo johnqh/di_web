@@ -49,7 +49,10 @@ export {
 } from '@sudobility/di/web';
 
 // Export service worker utilities
-export { registerServiceWorker, unregisterServiceWorker } from './sw/register.js';
+export {
+  registerServiceWorker,
+  unregisterServiceWorker,
+} from './sw/register.js';
 
 // Re-export Firebase interfaces and types from @sudobility/di/web
 export type {

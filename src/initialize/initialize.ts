@@ -147,7 +147,8 @@ export async function initializeWebApp(
 
   // 8. Initialize performance monitoring (app-specific)
   if (registerServiceWorker === true) {
-    const { registerServiceWorker: register } = await import('../sw/register.js');
+    const { registerServiceWorker: register } =
+      await import('../sw/register.js');
     register();
   } else if (typeof registerServiceWorker === 'function') {
     registerServiceWorker();

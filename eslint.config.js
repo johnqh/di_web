@@ -4,6 +4,9 @@ import typescriptParser from '@typescript-eslint/parser';
 import prettier from 'eslint-plugin-prettier';
 
 export default [
+  {
+    ignores: ['src/sw/*.js'],
+  },
   js.configs.recommended,
   {
     files: ['src/**/*.ts', 'src/**/*.tsx'],
@@ -22,6 +25,7 @@ export default [
         Response: 'readonly',
         console: 'readonly',
         setTimeout: 'readonly',
+        setInterval: 'readonly',
         clearTimeout: 'readonly',
         Promise: 'readonly',
         Map: 'readonly',

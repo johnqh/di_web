@@ -22,14 +22,17 @@ export function registerServiceWorker(): void {
           () => {
             registration.update();
           },
-          24 * 60 * 60 * 1000,
+          24 * 60 * 60 * 1000
         );
 
         registration.addEventListener('updatefound', () => {
           const newWorker = registration.installing;
           if (newWorker) {
             newWorker.addEventListener('statechange', () => {
-              if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              if (
+                newWorker.state === 'installed' &&
+                navigator.serviceWorker.controller
+              ) {
                 console.info('New content available, refresh to update');
               }
             });
@@ -44,7 +47,7 @@ export function registerServiceWorker(): void {
 
 export function unregisterServiceWorker(): void {
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.ready.then(registration => {
+    navigator.serviceWorker.ready.then((registration) => {
       registration.unregister();
     });
   }
