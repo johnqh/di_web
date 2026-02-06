@@ -27,11 +27,8 @@ export function serviceWorkerPlugin(options: ServiceWorkerPluginOptions = {}) {
   return {
     name: 'sudobility-service-worker' as const,
 
-    configureServer(server: {
-      middlewares: {
-        use: (fn: Function) => void;
-      };
-    }) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    configureServer(server: any) {
       server.middlewares.use(
         (
           req: { url?: string },
