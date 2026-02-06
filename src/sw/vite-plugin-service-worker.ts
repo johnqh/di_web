@@ -2,10 +2,9 @@
  * Vite plugin that emits sw.js (and optionally firebase-messaging-sw.js) into build output
  * and serves them during dev.
  *
- * We define a minimal structural return type instead of importing `Plugin` from vite,
- * because when di_web has its own node_modules/vite, the Plugin type from that copy
- * is nominally incompatible with the consuming app's copy (different private fields).
- * Vite accepts our object structurally at runtime regardless.
+ * This file intentionally avoids importing types from 'vite'. When di_web is installed
+ * from npm, its node_modules/vite types would conflict with the consuming app's copy.
+ * Instead we use inline type annotations that are structurally compatible.
  */
 
 import { readFileSync } from 'fs';
@@ -17,53 +16,31 @@ export interface ServiceWorkerPluginOptions {
   includeFirebaseMessaging?: boolean;
 }
 
-interface MiddlewareRequest {
-  url?: string;
-}
-
-interface MiddlewareResponse {
-  setHeader: (k: string, v: string) => void;
-  end: (s: string) => void;
-}
-
-interface ViteDevServer {
-  middlewares: {
-    use: (
-      fn: (
-        req: MiddlewareRequest,
-        res: MiddlewareResponse,
-        next: () => void
-      ) => void
-    ) => void;
-  };
-}
-
-interface EmitContext {
-  emitFile: (file: { type: string; fileName: string; source: string }) => void;
-}
-
-interface VitePlugin {
-  name: string;
-  configureServer: (server: ViteDevServer) => void;
-  generateBundle: (this: EmitContext) => void;
-}
-
-export function serviceWorkerPlugin(
-  options: ServiceWorkerPluginOptions = {}
-): VitePlugin {
+export function serviceWorkerPlugin(options: ServiceWorkerPluginOptions = {}) {
   const { includeFirebaseMessaging = false } = options;
 
   // Resolve paths to the co-located dist/sw/ files
-  const __dirname = dirname(fileURLToPath(import.meta.url));
-  const swPath = resolve(__dirname, 'sw.js');
-  const firebaseSwPath = resolve(__dirname, 'firebase-messaging-sw.js');
+  const swDir = dirname(fileURLToPath(import.meta.url));
+  const swPath = resolve(swDir, 'sw.js');
+  const firebaseSwPath = resolve(swDir, 'firebase-messaging-sw.js');
 
   return {
-    name: 'sudobility-service-worker',
+    name: 'sudobility-service-worker' as const,
 
-    configureServer(server: ViteDevServer) {
+    configureServer(server: {
+      middlewares: {
+        use: (fn: Function) => void;
+      };
+    }) {
       server.middlewares.use(
-        (req: MiddlewareRequest, res: MiddlewareResponse, next: () => void) => {
+        (
+          req: { url?: string },
+          res: {
+            setHeader: (k: string, v: string) => void;
+            end: (s: string) => void;
+          },
+          next: () => void
+        ) => {
           if (req.url === '/sw.js') {
             res.setHeader('Content-Type', 'application/javascript');
             res.end(readFileSync(swPath, 'utf-8'));
@@ -82,15 +59,31 @@ export function serviceWorkerPlugin(
       );
     },
 
-    generateBundle(this: EmitContext) {
-      this.emitFile({
+    generateBundle() {
+      (
+        this as unknown as {
+          emitFile: (f: {
+            type: 'asset';
+            fileName: string;
+            source: string;
+          }) => void;
+        }
+      ).emitFile({
         type: 'asset',
         fileName: 'sw.js',
         source: readFileSync(swPath, 'utf-8'),
       });
 
       if (includeFirebaseMessaging) {
-        this.emitFile({
+        (
+          this as unknown as {
+            emitFile: (f: {
+              type: 'asset';
+              fileName: string;
+              source: string;
+            }) => void;
+          }
+        ).emitFile({
           type: 'asset',
           fileName: 'firebase-messaging-sw.js',
           source: readFileSync(firebaseSwPath, 'utf-8'),
