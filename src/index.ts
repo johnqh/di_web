@@ -52,6 +52,8 @@ export {
 export {
   registerServiceWorker,
   unregisterServiceWorker,
+  type ServiceWorkerState,
+  type RegisterServiceWorkerOptions,
 } from './sw/register.js';
 
 // Re-export Firebase interfaces and types from @sudobility/di/web

@@ -45,6 +45,31 @@ export interface RevenueCatConfig {
 
   /** Free tier package configuration */
   freeTierPackage?: { packageId: string; name: string };
+
+  /**
+   * Maximum number of retry attempts when RevenueCat initialization fails.
+   * Each retry waits exponentially longer (1 s, 2 s, 4 s, ...).
+   * Set to 0 to disable retries.
+   *
+   * @default 2
+   */
+  maxRetries?: number;
+
+  /**
+   * When `true`, RevenueCat initialization is deferred and not awaited during
+   * `initializeWebApp()`. Instead, it runs in the background so it does not
+   * block app startup. Failures are still logged and retried.
+   *
+   * @default false
+   */
+  lazy?: boolean;
+
+  /**
+   * Optional callback invoked when RevenueCat initialization fails after all
+   * retry attempts. Receives the final error so the consumer can surface it
+   * in their UI or error-reporting pipeline.
+   */
+  onError?: (error: unknown) => void;
 }
 
 /**
@@ -117,26 +142,12 @@ export async function initializeWebApp(
 
   // 6. Initialize RevenueCat subscription (if config provided)
   if (revenueCatConfig) {
-    try {
-      const subscriptionLib = await import('@sudobility/subscription_lib');
-      const isProduction = revenueCatConfig.isProduction ?? true;
-      const apiKey = isProduction
-        ? revenueCatConfig.apiKey
-        : revenueCatConfig.apiKeySandbox || revenueCatConfig.apiKey;
-
-      subscriptionLib.configureRevenueCatAdapter(apiKey);
-      subscriptionLib.initializeSubscription({
-        adapter: subscriptionLib.createRevenueCatAdapter(),
-        freeTier: revenueCatConfig.freeTierPackage ?? {
-          packageId: 'free',
-          name: 'Free',
-        },
-      });
-    } catch (error) {
-      console.error(
-        'Failed to initialize RevenueCat. Make sure @sudobility/subscription_lib is installed.',
-        error
-      );
+    const initRC = () => initializeRevenueCat(revenueCatConfig);
+    if (revenueCatConfig.lazy) {
+      // Fire-and-forget -- don't block app startup
+      void initRC();
+    } else {
+      await initRC();
     }
   }
 
@@ -158,4 +169,79 @@ export async function initializeWebApp(
   }
 
   return analytics;
+}
+
+// ============================================================================
+// RevenueCat Initialization with Retry
+// ============================================================================
+
+/** Default number of retry attempts for RevenueCat initialization. */
+const RC_DEFAULT_MAX_RETRIES = 2;
+
+/** Base delay (ms) between retries -- doubled on each subsequent attempt. */
+const RC_RETRY_BASE_DELAY_MS = 1000;
+
+/**
+ * Helper that delays execution for the given number of milliseconds.
+ *
+ * @param ms - Milliseconds to wait.
+ */
+function delay(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+/**
+ * Initialize RevenueCat with retry logic.
+ *
+ * Dynamically imports `@sudobility/subscription_lib`, configures the
+ * RevenueCat adapter with the appropriate API key, and calls
+ * `initializeSubscription`. If any step fails it retries up to
+ * `config.maxRetries` times (default 2) with exponential back-off.
+ * After all retries are exhausted it calls `config.onError` (if provided)
+ * and logs the error.
+ *
+ * @param config - RevenueCat configuration including retry and error options.
+ */
+async function initializeRevenueCat(config: RevenueCatConfig): Promise<void> {
+  const maxRetries = config.maxRetries ?? RC_DEFAULT_MAX_RETRIES;
+
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      const subscriptionLib = await import('@sudobility/subscription_lib');
+      const isProduction = config.isProduction ?? true;
+      const apiKey = isProduction
+        ? config.apiKey
+        : config.apiKeySandbox || config.apiKey;
+
+      subscriptionLib.configureRevenueCatAdapter(apiKey);
+      subscriptionLib.initializeSubscription({
+        adapter: subscriptionLib.createRevenueCatAdapter(),
+        freeTier: config.freeTierPackage ?? {
+          packageId: 'free',
+          name: 'Free',
+        },
+      });
+
+      // Success -- exit early
+      return;
+    } catch (error) {
+      const isLastAttempt = attempt === maxRetries;
+      if (isLastAttempt) {
+        console.error(
+          `Failed to initialize RevenueCat after ${String(maxRetries + 1)} attempt(s). ` +
+            'Make sure @sudobility/subscription_lib is installed.',
+          error
+        );
+        config.onError?.(error);
+      } else {
+        const retryDelay = RC_RETRY_BASE_DELAY_MS * Math.pow(2, attempt);
+        console.warn(
+          `RevenueCat initialization failed (attempt ${String(attempt + 1)}/${String(maxRetries + 1)}). ` +
+            `Retrying in ${String(retryDelay)}ms...`,
+          error
+        );
+        await delay(retryDelay);
+      }
+    }
+  }
 }
