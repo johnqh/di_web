@@ -8,3 +8,6 @@ coverage/
 .vscode/
 .idea/
 *.tsbuildinfo
+
+# Claude Code local settings
+.claude/settings.local.json
