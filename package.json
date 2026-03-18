@@ -1,6 +1,6 @@
 {
   "name": "@sudobility/di_web",
-  "version": "0.1.124",
+  "version": "0.1.125",
   "description": "Web implementations of dependency injection services for Sudobility",
   "type": "module",
   "main": "dist/index.js",
@@ -64,7 +64,7 @@
     "@eslint/js": "^9.38.0",
     "@sudobility/components": "^5.0.21",
     "@sudobility/di": "^1.5.46",
-    "@sudobility/subscription_lib": "^0.0.26",
+    "@sudobility/subscription_lib": "^0.0.27",
     "@sudobility/types": "^1.9.58",
     "@types/node": "^24.10.1",
     "@types/react": "^19.1.8",
