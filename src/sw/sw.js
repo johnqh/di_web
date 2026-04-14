@@ -29,9 +29,9 @@ const PRECACHE_URLS = ['/', '/manifest.json'];
 const ALLOWED_CDN_DOMAINS = ['cdn.jsdelivr.net', 'unpkg.com'];
 
 // Install event - precache essential files
-self.addEventListener('install', event => {
+self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(STATIC_CACHE).then(cache => {
+    caches.open(STATIC_CACHE).then((cache) => {
       return cache.addAll(PRECACHE_URLS);
     })
   );
@@ -39,25 +39,28 @@ self.addEventListener('install', event => {
 });
 
 // Activate event - clean up old caches
-self.addEventListener('activate', event => {
+self.addEventListener('activate', (event) => {
   const CURRENT_CACHES = [STATIC_CACHE, DYNAMIC_CACHE, IMAGE_CACHE];
   const LEGACY_PREFIXES = ['web3mail-', 'shapeshyft-'];
 
   event.waitUntil(
     caches
       .keys()
-      .then(cacheNames => {
+      .then((cacheNames) => {
         return Promise.all(
           cacheNames
-            .filter(name => {
+            .filter((name) => {
               // Remove old sudobility caches
-              if (name.startsWith('sudobility-') && !CURRENT_CACHES.includes(name)) {
+              if (
+                name.startsWith('sudobility-') &&
+                !CURRENT_CACHES.includes(name)
+              ) {
                 return true;
               }
               // Remove legacy app-specific caches
-              return LEGACY_PREFIXES.some(prefix => name.startsWith(prefix));
+              return LEGACY_PREFIXES.some((prefix) => name.startsWith(prefix));
             })
-            .map(name => caches.delete(name))
+            .map((name) => caches.delete(name))
         );
       })
       .then(() => self.clients.claim())
@@ -86,7 +89,7 @@ function isExpired(response, cacheName) {
 }
 
 // Fetch event - implement caching strategies
-self.addEventListener('fetch', event => {
+self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
@@ -107,13 +110,14 @@ self.addEventListener('fetch', event => {
   // Skip non-same-origin requests unless on CDN allowlist
   if (
     url.origin !== location.origin &&
-    !ALLOWED_CDN_DOMAINS.some(domain => url.hostname.includes(domain))
+    !ALLOWED_CDN_DOMAINS.some((domain) => url.hostname.includes(domain))
   ) {
     return;
   }
 
   // Skip API requests
-  if (url.pathname.startsWith('/api/') || url.hostname.startsWith('api.')) return;
+  if (url.pathname.startsWith('/api/') || url.hostname.startsWith('api.'))
+    return;
 
   // Strategy: Cache First for static assets (JS, CSS, fonts)
   if (
@@ -198,7 +202,7 @@ async function staleWhileRevalidate(request, cacheName) {
   const cache = await caches.open(cacheName);
   const cached = await cache.match(request);
 
-  const fetchPromise = fetch(request).then(response => {
+  const fetchPromise = fetch(request).then((response) => {
     if (response.ok) {
       cache.put(request, response.clone());
     }
@@ -209,14 +213,14 @@ async function staleWhileRevalidate(request, cacheName) {
 }
 
 // Handle messages from the main thread
-self.addEventListener('message', event => {
+self.addEventListener('message', (event) => {
   if (event.data?.type === 'SKIP_WAITING') {
     self.skipWaiting();
   }
 });
 
 // Background sync for failed requests
-self.addEventListener('sync', event => {
+self.addEventListener('sync', (event) => {
   if (event.tag === 'background-sync') {
     event.waitUntil(doBackgroundSync());
   }
@@ -237,7 +241,7 @@ async function doBackgroundSync() {
 }
 
 // Push notification handler
-self.addEventListener('push', event => {
+self.addEventListener('push', (event) => {
   if (!event.data) return;
 
   try {
@@ -263,7 +267,7 @@ self.addEventListener('push', event => {
 });
 
 // Notification click handler
-self.addEventListener('notificationclick', event => {
+self.addEventListener('notificationclick', (event) => {
   event.notification.close();
 
   if (event.action === 'dismiss') return;
@@ -271,7 +275,7 @@ self.addEventListener('notificationclick', event => {
   const urlToOpen = event.notification.data?.url || '/';
 
   event.waitUntil(
-    self.clients.matchAll({ type: 'window' }).then(clients => {
+    self.clients.matchAll({ type: 'window' }).then((clients) => {
       for (const client of clients) {
         if (client.url === urlToOpen && 'focus' in client) {
           return client.focus();

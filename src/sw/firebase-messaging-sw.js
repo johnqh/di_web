@@ -53,8 +53,12 @@
 // 1. Import Firebase compat libraries
 //    These scripts expose a global `firebase` object in the SW scope.
 // ---------------------------------------------------------------------------
-importScripts('https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js');
-importScripts('https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging-compat.js');
+importScripts(
+  'https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js'
+);
+importScripts(
+  'https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging-compat.js'
+);
 
 // ---------------------------------------------------------------------------
 // 2. Firebase configuration
@@ -89,7 +93,7 @@ const messaging = firebase.messaging();
 //    closed and an FCM message arrives.  Foreground messages are handled by
 //    the main app via `onMessage()` from `firebase/messaging`.
 // ---------------------------------------------------------------------------
-messaging.onBackgroundMessage(payload => {
+messaging.onBackgroundMessage((payload) => {
   // Extract notification title and body from the FCM payload, falling back
   // to sensible defaults if the fields are missing.
   const notificationTitle = payload.notification?.title || 'New Email';
@@ -134,7 +138,7 @@ messaging.onBackgroundMessage(payload => {
 // 6. Handle notification click events
 //    Determines which action the user selected and routes accordingly.
 // ---------------------------------------------------------------------------
-self.addEventListener('notificationclick', event => {
+self.addEventListener('notificationclick', (event) => {
   // Close the notification regardless of the action taken.
   event.notification.close();
 
@@ -148,7 +152,7 @@ self.addEventListener('notificationclick', event => {
           type: 'window',
           includeUncontrolled: true,
         })
-        .then(clientList => {
+        .then((clientList) => {
           // If the app is already open in a tab, focus and navigate it.
           for (const client of clientList) {
             if (client.url.includes(self.location.origin)) {
@@ -173,7 +177,7 @@ self.addEventListener('notificationclick', event => {
 // 7. Handle notification close events (swipe-away / manual dismiss)
 //    Currently a no-op.  Add analytics or cleanup logic here if needed.
 // ---------------------------------------------------------------------------
-self.addEventListener('notificationclose', event => {
+self.addEventListener('notificationclose', (event) => {
   // Notification was closed by the user without tapping an action.
 });
 
@@ -182,7 +186,7 @@ self.addEventListener('notificationclose', event => {
 //    FCM messages are handled automatically by `onBackgroundMessage` above.
 //    This handler is a catch-all for non-FCM push payloads.
 // ---------------------------------------------------------------------------
-self.addEventListener('push', event => {
+self.addEventListener('push', (event) => {
   if (event.data) {
     const data = event.data.json();
 
