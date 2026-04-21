@@ -79,6 +79,9 @@ export interface WebAppInitOptions {
   /** Firebase configuration */
   firebaseConfig: FirebaseConfig;
 
+  /** Options controlling which Firebase services to enable (analytics, remote config, messaging) */
+  firebaseInitOptions?: import('@sudobility/di').FirebaseInitOptions;
+
   /** RevenueCat configuration - if provided, enables RevenueCat */
   revenueCatConfig?: RevenueCatConfig;
 
@@ -117,6 +120,7 @@ export async function initializeWebApp(
 ): Promise<FirebaseAnalyticsService> {
   const {
     firebaseConfig,
+    firebaseInitOptions,
     revenueCatConfig,
     initializeI18n,
     registerServiceWorker,
@@ -127,7 +131,7 @@ export async function initializeWebApp(
   initializeStorageService();
 
   // 2. Initialize Firebase DI service (analytics, remote config, etc.)
-  initializeFirebaseService(firebaseConfig);
+  initializeFirebaseService(firebaseConfig, firebaseInitOptions);
 
   // 3. Initialize Firebase Analytics singleton
   const analytics = initializeFirebaseAnalytics();

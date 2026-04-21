@@ -135,7 +135,19 @@ describe('initializeWebApp', () => {
 
   it('passes firebaseConfig to initializeFirebaseService', async () => {
     await initializeWebApp({ firebaseConfig });
-    expect(initializeFirebaseService).toHaveBeenCalledWith(firebaseConfig);
+    expect(initializeFirebaseService).toHaveBeenCalledWith(
+      firebaseConfig,
+      undefined
+    );
+  });
+
+  it('passes firebaseInitOptions to initializeFirebaseService', async () => {
+    const firebaseInitOptions = { enableAnalytics: false };
+    await initializeWebApp({ firebaseConfig, firebaseInitOptions });
+    expect(initializeFirebaseService).toHaveBeenCalledWith(
+      firebaseConfig,
+      firebaseInitOptions
+    );
   });
 
   // -----------------------------------------------------------------------
