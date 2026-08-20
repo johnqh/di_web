@@ -1,5 +1,10 @@
 # di_web - AI Development Guide
 
+> **Git policy — never auto-commit or auto-push.** Leave your work in the working tree.
+> Run `git commit`, `git push`, `gh pr create`, or `scripts/push_all.sh` **only when the user
+> explicitly asks in that turn**. Approval for an earlier change does not carry forward, and
+> finishing a task is not permission to commit it.
+
 ## Overview
 
 `@sudobility/di_web` is a TypeScript library that provides web-specific implementations of dependency injection services for Sudobility applications. It implements interfaces defined in `@sudobility/di` using browser APIs and React, and also ships a shared service worker with a Vite plugin for caching, push notifications, and offline support.
@@ -231,3 +236,7 @@ bun run test:coverage  # with coverage report
 - **jsdom** -- browser environment for tests
 - **typescript** 5.9+ -- compiler
 - **eslint** + **prettier** -- code quality
+
+## Git Workflow
+
+- Do not use feature branches for code changes. Always stay on the current branch.
