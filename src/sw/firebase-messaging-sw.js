@@ -86,9 +86,9 @@ const firebaseConfig = {
 // whole worker fails to install.
 const fcmConfigured = Boolean(
   firebaseConfig.apiKey &&
-    firebaseConfig.projectId &&
-    firebaseConfig.messagingSenderId &&
-    firebaseConfig.appId
+  firebaseConfig.projectId &&
+  firebaseConfig.messagingSenderId &&
+  firebaseConfig.appId
 );
 
 if (fcmConfigured && !firebase.apps.length) {
