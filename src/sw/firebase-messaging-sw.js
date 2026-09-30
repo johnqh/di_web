@@ -24,9 +24,11 @@
 //   VITE_FIREBASE_APP_ID=1:123456789:web:abc123
 //   VITE_FIREBASE_MEASUREMENT_ID=G-XXXXXXX
 //
-// Because service workers cannot access `import.meta.env`, the values are
-// injected at build time via the `serviceWorkerPlugin` Vite plugin (or any
-// other build-time replacement tool such as `@rollup/plugin-replace`).
+// Because service workers cannot access `import.meta.env` (and have no
+// `process`), `serviceWorkerPlugin({ includeFirebaseMessaging: true })`
+// replaces every `process.env.VITE_*` reference below with the string value
+// from the app's Vite env, and `__FIREBASE_SDK_VERSION__` with the version of
+// the `firebase` package the app has installed, both in dev and in builds.
 //
 // If you are NOT using the Vite plugin you can manually replace the
 // `process.env.VITE_*` references below with hard-coded strings matching
@@ -38,8 +40,10 @@
 // - The Firebase compat SDK (`firebase-app-compat` and
 //   `firebase-messaging-compat`) is loaded via `importScripts` because
 //   service workers do not support ES module imports in all browsers.
-// - The compat SDK version (10.7.1 below) should be kept in sync with the
-//   Firebase SDK version used by the main application.
+// - The compat SDK version is substituted from the app's installed `firebase`
+//   package so the worker and the page always run the same SDK release.
+// - When the config is incomplete the worker logs a warning and skips FCM
+//   setup instead of throwing, so the rest of the worker still installs.
 // - The worker handles three event types:
 //     1. `onBackgroundMessage` -- FCM-delivered push messages while the app
 //        is in the background.
@@ -54,10 +58,10 @@
 //    These scripts expose a global `firebase` object in the SW scope.
 // ---------------------------------------------------------------------------
 importScripts(
-  'https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js'
+  'https://www.gstatic.com/firebasejs/__FIREBASE_SDK_VERSION__/firebase-app-compat.js'
 );
 importScripts(
-  'https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging-compat.js'
+  'https://www.gstatic.com/firebasejs/__FIREBASE_SDK_VERSION__/firebase-messaging-compat.js'
 );
 
 // ---------------------------------------------------------------------------
@@ -78,14 +82,29 @@ const firebaseConfig = {
 // ---------------------------------------------------------------------------
 // 3. Initialise Firebase (only once -- guard against duplicate initialisation)
 // ---------------------------------------------------------------------------
-if (!firebase.apps.length) {
+// FCM needs these three; without them firebase.messaging() throws and the
+// whole worker fails to install.
+const fcmConfigured = Boolean(
+  firebaseConfig.apiKey &&
+    firebaseConfig.projectId &&
+    firebaseConfig.messagingSenderId &&
+    firebaseConfig.appId
+);
+
+if (fcmConfigured && !firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
+}
+if (!fcmConfigured) {
+  console.warn(
+    '[firebase-messaging-sw] Firebase config is incomplete (need VITE_FIREBASE_API_KEY, ' +
+      'PROJECT_ID, MESSAGING_SENDER_ID, APP_ID); background push is disabled.'
+  );
 }
 
 // ---------------------------------------------------------------------------
 // 4. Get the Firebase Cloud Messaging instance
 // ---------------------------------------------------------------------------
-const messaging = firebase.messaging();
+const messaging = fcmConfigured ? firebase.messaging() : null;
 
 // ---------------------------------------------------------------------------
 // 5. Handle background messages
@@ -93,7 +112,7 @@ const messaging = firebase.messaging();
 //    closed and an FCM message arrives.  Foreground messages are handled by
 //    the main app via `onMessage()` from `firebase/messaging`.
 // ---------------------------------------------------------------------------
-messaging.onBackgroundMessage((payload) => {
+messaging?.onBackgroundMessage((payload) => {
   // Extract notification title and body from the FCM payload, falling back
   // to sensible defaults if the fields are missing.
   const notificationTitle = payload.notification?.title || 'New Email';
@@ -188,7 +207,14 @@ self.addEventListener('notificationclose', (event) => {
 // ---------------------------------------------------------------------------
 self.addEventListener('push', (event) => {
   if (event.data) {
-    const data = event.data.json();
+    // Non-JSON payloads are legal; an uncaught parse error would surface as
+    // an error on every such push.
+    let data;
+    try {
+      data = event.data.json();
+    } catch {
+      data = event.data.text();
+    }
 
     // Process custom (non-FCM) push payloads here if needed.
     // For standard FCM usage this handler is unused.

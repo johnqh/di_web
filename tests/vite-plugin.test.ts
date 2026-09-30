@@ -184,3 +184,115 @@ describe('serviceWorkerPlugin', () => {
     });
   });
 });
+
+// ---------------------------------------------------------------------------
+// Firebase messaging worker rendering
+// ---------------------------------------------------------------------------
+
+import { readFileSync } from 'fs';
+import { resolve } from 'path';
+import { runInNewContext } from 'vm';
+import {
+  DEFAULT_FIREBASE_SDK_VERSION,
+  renderFirebaseMessagingWorker,
+} from '../src/sw/vite-plugin-service-worker.js';
+
+const RAW_WORKER = readFileSync(
+  resolve(__dirname, '../src/sw/firebase-messaging-sw.js'),
+  'utf-8'
+);
+
+const FULL_ENV = {
+  VITE_FIREBASE_API_KEY: 'AIza-test',
+  VITE_FIREBASE_AUTH_DOMAIN: 'app.firebaseapp.com',
+  VITE_FIREBASE_PROJECT_ID: 'app',
+  VITE_FIREBASE_STORAGE_BUCKET: 'app.appspot.com',
+  VITE_FIREBASE_MESSAGING_SENDER_ID: '123',
+  VITE_FIREBASE_APP_ID: '1:123:web:abc',
+  VITE_FIREBASE_MEASUREMENT_ID: 'G-TEST',
+};
+
+/** Execute a rendered worker against a fake service-worker global scope. */
+function runWorker(source: string) {
+  const imported: string[] = [];
+  const listeners: Record<string, unknown> = {};
+  const warnings: unknown[] = [];
+  let initializedWith: unknown = null;
+  let backgroundHandler: unknown = null;
+  const firebase = {
+    apps: [] as unknown[],
+    initializeApp(config: unknown) {
+      initializedWith = config;
+      firebase.apps.push(config);
+    },
+    messaging() {
+      return {
+        onBackgroundMessage(handler: unknown) {
+          backgroundHandler = handler;
+        },
+      };
+    },
+  };
+  runInNewContext(source, {
+    importScripts: (url: string) => imported.push(url),
+    firebase,
+    self: {
+      addEventListener: (type: string, fn: unknown) => (listeners[type] = fn),
+      registration: { showNotification: () => undefined },
+      location: { origin: 'https://app.test' },
+    },
+    clients: {},
+    console: { warn: (...args: unknown[]) => warnings.push(args), log: () => undefined },
+  });
+  return { imported, listeners, warnings, initializedWith, backgroundHandler };
+}
+
+describe('renderFirebaseMessagingWorker', () => {
+  it('replaces every process.env reference and the SDK version', () => {
+    const out = renderFirebaseMessagingWorker(RAW_WORKER, FULL_ENV, '12.8.0');
+    expect(out).not.toMatch(/process\.env\.VITE_[A-Z]/);
+    expect(out).not.toContain('__FIREBASE_SDK_VERSION__');
+    expect(out).toContain('"AIza-test"');
+    expect(out).toContain('firebasejs/12.8.0/firebase-messaging-compat.js');
+  });
+
+  it('produces a worker that initializes FCM with the app config', () => {
+    const run = runWorker(renderFirebaseMessagingWorker(RAW_WORKER, FULL_ENV, '12.8.0'));
+    expect(run.imported).toEqual([
+      'https://www.gstatic.com/firebasejs/12.8.0/firebase-app-compat.js',
+      'https://www.gstatic.com/firebasejs/12.8.0/firebase-messaging-compat.js',
+    ]);
+    expect(run.initializedWith).toMatchObject({ apiKey: 'AIza-test', appId: '1:123:web:abc' });
+    expect(typeof run.backgroundHandler).toBe('function');
+    expect(run.warnings).toEqual([]);
+  });
+
+  it('produces a worker that installs without throwing when config is missing', () => {
+    const run = runWorker(renderFirebaseMessagingWorker(RAW_WORKER, {}, DEFAULT_FIREBASE_SDK_VERSION));
+    expect(run.initializedWith).toBeNull();
+    expect(run.backgroundHandler).toBeNull();
+    expect(run.warnings).toHaveLength(1);
+    expect(Object.keys(run.listeners)).toEqual(
+      expect.arrayContaining(['notificationclick', 'push'])
+    );
+  });
+
+  it('the unrendered worker would have thrown: it references process', () => {
+    expect(RAW_WORKER).toContain('process.env.VITE_FIREBASE_API_KEY');
+    expect(() => runWorker(RAW_WORKER.replace(/__FIREBASE_SDK_VERSION__/g, '12.8.0'))).toThrow(
+      /process is not defined/
+    );
+  });
+});
+
+describe('serviceWorkerPlugin env wiring', () => {
+  it('uses the Vite env captured in configResolved for build and dev', () => {
+    const plugin = serviceWorkerPlugin({ includeFirebaseMessaging: true });
+    plugin.configResolved({ root: resolve(__dirname, '..'), env: FULL_ENV });
+    const emitted = runGenerateBundle(plugin);
+    const source = emitted['firebase-messaging-sw.js']!.source;
+    expect(source).not.toMatch(/process\.env\.VITE_[A-Z]/);
+    expect(source).toContain('"123"');
+    expect(source).toMatch(/firebasejs\/\d+\.\d+\.\d+\//);
+  });
+});
